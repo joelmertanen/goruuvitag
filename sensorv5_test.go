@@ -1,8 +1,9 @@
-package main
+package goruuvitag
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 
 	"encoding/hex"
 )
@@ -11,7 +12,7 @@ import (
 func TestParseSensorFormat5(t *testing.T) {
 	data, _ := hex.DecodeString("0512FC5394C37C0004FFFC040CAC364200CDCBB8334C884F")
 
-	results := parseSensorFormat5(data)
+	results := ParseSensorFormat5(data)
 	assert.Equal(t, 24.3, *results.Temperature, "Temperature fail")
 	assert.Equal(t, uint32(100044), *results.Pressure, "Pressure fail")
 	assert.Equal(t, 53.49, *results.Humidity, "Humidity fail")
@@ -28,7 +29,7 @@ func TestParseSensorFormat5(t *testing.T) {
 func TestParseSensorFormat5MaxValues(t *testing.T) {
 	data, _ := hex.DecodeString("057FFFFFFEFFFE7FFF7FFF7FFFFFDEFEFFFECBB8334C884F")
 
-	results := parseSensorFormat5(data)
+	results := ParseSensorFormat5(data)
 	assert.Equal(t, 163.835, *results.Temperature, "Temperature fail")
 	assert.Equal(t, uint32(115534), *results.Pressure, "Pressure fail")
 	assert.Equal(t, 163.8350, *results.Humidity, "Humidity fail")
@@ -45,7 +46,7 @@ func TestParseSensorFormat5MaxValues(t *testing.T) {
 func TestParseSensorFormat5MinValues(t *testing.T) {
 	data, _ := hex.DecodeString("058001000000008001800180010000000000CBB8334C884F")
 
-	results := parseSensorFormat5(data)
+	results := ParseSensorFormat5(data)
 	assert.Equal(t, -163.835, *results.Temperature, "Temperature fail")
 	assert.Equal(t, uint32(50000), *results.Pressure, "Pressure fail")
 	assert.Equal(t, 0.0, *results.Humidity, "Humidity fail")
@@ -62,7 +63,7 @@ func TestParseSensorFormat5MinValues(t *testing.T) {
 func TestParseSensorFormat5InvalidValues(t *testing.T) {
 	data, _ := hex.DecodeString("058000FFFFFFFF800080008000FFFFFFFFFFFFFFFFFFFFFF")
 
-	results := parseSensorFormat5(data)
+	results := ParseSensorFormat5(data)
 	assert.Nil(t, results.Temperature)
 	assert.Nil(t, results.Pressure)
 	assert.Nil(t, results.Humidity)
@@ -76,10 +77,8 @@ func TestParseSensorFormat5InvalidValues(t *testing.T) {
 	assert.Nil(t, results.MAC)
 }
 
-func TestParseFormat3Temperature(t *testing.T) {
-	assert.Equal(t, 0.0, parseFormat3Temperature(128, 0), "Negative zero is zero")
-	assert.Equal(t, -2.0, parseFormat3Temperature(130, 0), "-2")
-	assert.Equal(t, 2.0, parseFormat3Temperature(2, 0), "2")
-	assert.Equal(t, 2.2, parseFormat3Temperature(2, 20), "fraction is ok")
-	assert.Equal(t, -2.99, parseFormat3Temperature(130, 99), "fraction is ok negative")
+func TestParseSensorFormat5MissingFields(t *testing.T) {
+	data, _ := hex.DecodeString("058000FFFFFFFF8")
+
+	assert.NotPanics(t, func() { ParseSensorFormat5(data) })
 }
