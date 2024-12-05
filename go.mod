@@ -1,6 +1,6 @@
 module github.com/joelmertanen/goruuvitag
 
-go 1.19
+go 1.23
 
 require (
 	github.com/elastic/go-sysinfo v1.9.0
