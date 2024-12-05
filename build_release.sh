@@ -14,3 +14,5 @@ done
 
 echo "Creating tar file"
 tar zcvf binaries.tar.gz output
+
+echo "release(s) built and packaged to binaries.tar.gz"
